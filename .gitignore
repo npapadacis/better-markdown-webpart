@@ -74,6 +74,9 @@ coverage/
 *.temp
 .cache/
 
+# Local configuration (with tenant-specific URLs)
+config/serve.local.json
+
 # Certificate files (keep dev cert out of repo)
 *.pfx
 *.cer

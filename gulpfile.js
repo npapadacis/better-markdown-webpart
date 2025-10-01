@@ -13,4 +13,7 @@ build.rig.getTasks = function () {
   return result;
 };
 
+// Note: SPFx automatically uses config/serve.local.json if it exists
+// Copy serve.local.json.example to serve.local.json and update your tenant name
+
 build.initialize(require('gulp'));

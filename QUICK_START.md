@@ -46,7 +46,21 @@ This will install:
 
 **Note:** This may take 3-5 minutes depending on your internet connection.
 
-### Step 3: Trust the Development Certificate
+### Step 3: Configure Your Tenant (Optional but Recommended)
+
+For a better development experience, set up your tenant URL:
+
+```bash
+# Copy the example file
+cp config/serve.local.json.example config/serve.local.json
+
+# Edit config/serve.local.json and replace 'yourtenant' with your actual tenant name
+# Example: "https://contoso.sharepoint.com/_layouts/workbench.aspx"
+```
+
+**Note:** `serve.local.json` is git-ignored, so your tenant info stays private.
+
+### Step 4: Trust the Development Certificate
 
 Required for local testing with HTTPS:
 
@@ -64,6 +78,8 @@ gulp trust-dev-cert
 ```bash
 gulp serve
 ```
+
+**Note:** If you created `serve.local.json`, it will automatically open your SharePoint tenant workbench. Otherwise, it uses the placeholder from `serve.json`.
 
 This will:
 1. Build the project
