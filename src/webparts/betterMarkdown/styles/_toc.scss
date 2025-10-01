@@ -1,0 +1,186 @@
+// Table of Contents Styles
+// Contains TOC styling for Wiki.js 2.5 style
+
+@import './variables';
+@import './mixins';
+
+// Table of Contents - Wiki.js 2.5 style
+.tableOfContents {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: $border-radius-lg;
+  padding: 20px;
+  margin: 0;
+  box-shadow: $shadow-md;
+
+  &::before {
+    content: "Table of Contents";
+    display: block;
+    font-weight: 600;
+    font-size: $spacing-md;
+    margin-bottom: $spacing-md;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: $spacing-sm;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    ul {
+      padding-left: $spacing-md;
+      margin-top: $spacing-sm;
+    }
+
+    li {
+      margin: $spacing-sm 0;
+
+      a {
+        display: block;
+        padding: 6px 12px;
+        color: #495057;
+        text-decoration: none;
+        border-radius: $spacing-xs;
+        font-size: 14px;
+        line-height: 1.4;
+        transition: all $transition-fast;
+
+        &:hover {
+          background-color: #e9ecef;
+          color: #0066cc;
+          text-decoration: none;
+        }
+
+        &:active,
+        &.active {
+          background-color: #0066cc;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// TOC in sidebar specific styling
+.tocSidebar .tableOfContents {
+  background-color: $color-background;
+  border: 1px solid #e9ecef;
+  border-radius: $border-radius-lg;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+
+  &::before {
+    content: "Contents";
+    font-size: 14px;
+    font-weight: 700;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  // Tighter spacing for TOC lists
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      margin: $spacing-xs 0; // Reduced from default spacing
+      line-height: 1.3; // Tighter line height
+
+      a {
+        display: block;
+        padding: 6px 12px; // Reduced padding
+        border-radius: $spacing-xs;
+        text-decoration: none;
+        color: #495057;
+        font-size: 14px; // Slightly smaller font
+        transition: all $transition-fast;
+
+        &:hover {
+          background-color: #f8f9fa;
+          color: #007bff;
+        }
+
+        &:focus,
+        &.active {
+          background-color: #007bff;
+          color: white;
+        }
+      }
+
+      // Nested list styling (for H2 under H1)
+      ul {
+        margin-left: $spacing-md;
+        margin-top: 2px;
+
+        li {
+          margin: 2px 0; // Even tighter for nested items
+
+          a {
+            font-size: 13px; // Smaller for nested items
+            padding: $spacing-xs 10px; // Less padding for nested
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark mode TOC styling
+.dark {
+  .tocSidebar .tableOfContents {
+    background-color: $color-dark-bg-secondary;
+    border: 1px solid #ccc;
+    border-color: $color-dark-border;
+
+    &::before {
+      color: $color-dark-text-secondary;
+      border-bottom-color: $color-dark-border;
+    }
+
+    // Dark mode tighter spacing for TOC lists
+    ul {
+      li {
+        margin: $spacing-xs 0; // Consistent with light mode
+        line-height: 1.3;
+
+        a {
+          color: $color-dark-text;
+          padding: 6px 12px; // Consistent padding
+          font-size: 14px;
+
+          &:hover {
+            background-color: #3a3a3a;
+            color: $color-dark-link;
+          }
+
+          &:active,
+          &.active {
+            background-color: #0066cc;
+            color: white;
+          }
+        }
+
+        // Nested list styling for dark mode
+        ul {
+          margin-left: $spacing-md;
+          margin-top: 2px;
+
+          li {
+            margin: 2px 0;
+
+            a {
+              font-size: 13px;
+              padding: $spacing-xs 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

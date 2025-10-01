@@ -1,0 +1,77 @@
+// List Styles
+// Contains regular lists, grid-list, and links-list styles
+
+@import './variables';
+@import './mixins';
+
+// Regular lists
+ul, ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: $spacing-md;
+
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+li {
+  word-wrap: break-all;
+
+  & > p {
+    margin-top: $spacing-md;
+  }
+
+  + li {
+    margin-top: 0.25em;
+  }
+}
+
+// Wiki.js list styles
+.grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 1rem;
+  list-style: none;
+  padding: 0;
+
+  li {
+    border: 1px solid #e1e4e8;
+    border-radius: $border-radius-sm;
+    padding: 1rem;
+    background-color: #f6f8fa;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+.links-list {
+  list-style: none;
+  padding: 0;
+
+  li {
+    border-bottom: 1px solid #e1e4e8;
+    padding: 0.75rem 0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    a {
+      display: block;
+      font-weight: 600;
+      font-size: 1.1em;
+
+      em {
+        display: block;
+        font-weight: normal;
+        font-size: 0.9em;
+        color: $color-text-secondary;
+        margin-top: 0.25em;
+      }
+    }
+  }
+}

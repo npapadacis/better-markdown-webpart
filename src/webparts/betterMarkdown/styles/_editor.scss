@@ -1,0 +1,560 @@
+// Editor Mode Styles
+// Contains editor layout, Monaco editor, preview pane, and related styles
+
+@import './variables';
+@import './mixins';
+
+// ===== EDITOR MODE STYLES =====
+.editorMode {
+  height: 100vh;
+  max-height: calc(100vh - 40px);
+
+  .editorLayout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+    background-color: $color-background;
+  }
+
+  .editorPane {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid $color-border;
+    background-color: #fafbfc;
+  }
+
+  .previewPane {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    background-color: $color-background;
+  }
+
+  .editorHeader,
+  .previewHeader {
+    padding: 12px $spacing-md;
+    background-color: #f6f8fa;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: $color-text-primary;
+    }
+  }
+
+  .editorActions {
+    display: flex;
+    gap: $spacing-sm;
+  }
+
+  .saveButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: $spacing-xs;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: #218838;
+    }
+
+    &:active {
+      background-color: #1e7e34;
+    }
+  }
+
+  .monacoContainer {
+    flex: 1;
+    min-height: 400px;
+    border: none;
+    background-color: #fafbfc;
+
+    // Monaco editor will fill this container
+    .monaco-editor {
+      .margin,
+      .monaco-editor-background {
+        background-color: #fafbfc !important;
+      }
+    }
+  }
+
+  .markdownEditor {
+    flex: 1;
+    border: none;
+    padding: $spacing-md;
+    font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: #fafbfc;
+    color: $color-text-primary;
+    resize: none;
+    outline: none;
+    min-height: 200px;
+
+    &::placeholder {
+      color: $color-text-secondary;
+    }
+
+    &:focus {
+      background-color: $color-background;
+    }
+  }
+
+  .previewContainer {
+    flex: 1;
+    position: relative;
+    display: flex;
+    background-color: $color-background;
+    overflow: hidden; // Ensure container doesn't expand
+  }
+
+  .previewContent {
+    flex: 1;
+    padding: $spacing-md;
+    overflow-y: auto; // Enable vertical scrolling
+    overflow-x: hidden; // Prevent horizontal scroll
+    background-color: $color-background;
+    min-width: 0;
+    height: 100%; // Ensure full height for scrolling
+
+    // Apply all wiki.js markdown styles directly
+    font-family: $font-family-base;
+    line-height: 1.6;
+    color: $color-text-primary;
+
+    // Headers
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: $spacing-lg;
+      margin-bottom: $spacing-md;
+      font-weight: 600;
+      line-height: 1.25;
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: 0.3em;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    h4 { font-size: 1em; }
+    h5 { font-size: 0.875em; }
+    h6 { font-size: 0.85em; }
+
+    // Paragraphs and spacing
+    p {
+      margin-bottom: $spacing-md;
+      line-height: 1.6;
+    }
+
+    // Blockquotes
+    blockquote {
+      padding: 0 1em;
+      color: $color-text-secondary;
+      border-left: 4px solid #dfe2e5;
+      background-color: #f6f8fa;
+      margin: $spacing-md 0;
+      border-radius: $border-radius-sm;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    // Code blocks with Wiki.js styling
+    .codeToolbar {
+      position: relative;
+      margin: $spacing-md 0;
+      background-color: #1e1e1e;
+      border-radius: $border-radius-lg;
+      overflow: hidden;
+
+      pre {
+        margin: 0;
+        padding: $spacing-md;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        overflow-x: auto;
+        border-radius: $border-radius-lg;
+
+       code {
+        display: block;
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+        color: #fff;
+        font-size: 0.85rem;
+        font-family: $font-family-code;
+        box-shadow: none;
+        position: relative;
+        white-space: inherit;
+        line-height: 0;
+       }
+
+        // Line structure with vertical divider
+        .codeLine {
+          display: flex;
+          align-items: flex-start;
+          line-height: 0; // Minimize line height for tighter spacing
+
+          .lineNumber {
+            color: #858585;
+            margin-right: $spacing-md;
+            user-select: none;
+            text-align: right;
+            min-width: 30px;
+            position: relative;
+            line-height: 1.4; // Reset line height for line numbers
+
+            // Vertical divider after line numbers - more prominent
+            &::after {
+              content: '';
+              position: absolute;
+              right: -8px;
+              top: 0;
+              bottom: 0;
+              width: 2px; // Make more prominent
+              background-color: #666; // Lighter color for better visibility
+            }
+          }
+
+          .lineContent {
+            flex: 1;
+            padding-left: $spacing-sm;
+            line-height: 1.4; // Reset line height for content
+          }
+        }
+      }
+
+      .toolbar {
+        position: absolute;
+        top: $spacing-sm;
+        right: $spacing-sm;
+        opacity: 0;
+        transition: opacity $transition-fast;
+
+        .toolbarItem button {
+          background-color: #333;
+          color: #fff;
+          border: none;
+          padding: $spacing-xs $spacing-sm;
+          border-radius: $spacing-xs;
+          font-size: 12px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #555;
+          }
+        }
+      }
+
+      &:hover .toolbar {
+        opacity: 1;
+      }
+    }
+
+    // Inline code
+    code {
+      background-color: #f6f8fa;
+      border-radius: $border-radius-sm;
+      font-size: 0.85em;
+      margin: 0;
+      padding: 0.2em 0.4em;
+      font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+    }
+
+    // Lists
+    ul, ol {
+      margin-bottom: $spacing-md;
+      padding-left: 2em;
+
+      li {
+        margin-bottom: 0.25em;
+      }
+    }
+
+    // Tables
+    table {
+      border-collapse: collapse;
+      margin-bottom: $spacing-md;
+      width: 100%;
+
+      th, td {
+        border: 1px solid #dfe2e5;
+        padding: 6px 13px;
+      }
+
+      th {
+        background-color: #f6f8fa;
+        font-weight: 600;
+      }
+
+      tr:nth-child(2n) {
+        background-color: #f6f8fa;
+      }
+    }
+
+    // Links
+    a {
+      color: $color-link;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    // Mermaid containers
+    .mermaidContainer {
+      margin: $spacing-md 0;
+      text-align: center;
+
+      .mermaid {
+        display: inline-block;
+        background-color: white;
+        border-radius: $border-radius-lg;
+        padding: $spacing-md;
+        box-shadow: $shadow-sm;
+      }
+    }
+
+    .mermaidError {
+      background-color: $color-danger-bg;
+      border: 1px solid $color-danger-border;
+      border-radius: $border-radius-sm;
+      padding: 1rem;
+      color: $color-danger-text;
+      font-family: monospace;
+    }
+  }
+
+  // TOC positioned fixed to the editor layout, not the preview
+  .editorLayout .tocSidebar {
+    position: fixed;
+    top: 200px;
+    right: 50px;
+    width: 260px;
+    height: fit-content;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    z-index: 1000;
+    transition: right $transition-normal;
+
+    // When property pane is open, move TOC to the left
+    &.propertyPaneOpen {
+      right: 350px;
+    }
+  }
+
+  .resizer {
+    width: 6px;
+    background-color: $color-border;
+    cursor: col-resize;
+    position: relative;
+
+    &:hover {
+      background-color: #d1d5da;
+    }
+
+    &:active {
+      background-color: $color-link;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 30px;
+      background-color: #d1d5da;
+      border-radius: 1px;
+    }
+  }
+
+  // Dark theme for editor
+  &.dark {
+    .editorLayout {
+      background-color: $color-dark-bg;
+      border-color: $color-dark-border;
+    }
+
+    .editorPane {
+      background-color: #252526;
+      border-right-color: $color-dark-border;
+    }
+
+    .previewPane {
+      background-color: $color-dark-bg;
+    }
+
+    .editorHeader,
+    .previewHeader {
+      background-color: $color-dark-bg-secondary;
+      border-bottom-color: $color-dark-border;
+
+      h3 {
+        color: $color-dark-text;
+      }
+    }
+
+    .monacoContainer {
+      background-color: #252526;
+
+      .monaco-editor {
+        .margin,
+        .monaco-editor-background {
+          background-color: #252526 !important;
+        }
+      }
+    }
+
+    .markdownEditor {
+      background-color: #252526;
+      color: $color-dark-text;
+
+      &::placeholder {
+        color: $color-dark-text-secondary;
+      }
+
+      &:focus {
+        background-color: $color-dark-bg;
+      }
+    }
+
+    .previewContainer {
+      background-color: $color-dark-bg;
+    }
+
+    .previewContent {
+      background-color: $color-dark-bg;
+      color: $color-dark-text;
+
+      // Dark theme overrides
+      blockquote {
+        color: $color-dark-text-secondary;
+        border-left-color: #555;
+        background-color: $color-dark-bg-secondary;
+      }
+
+      code {
+        background-color: $color-dark-bg-secondary;
+        color: $color-dark-text;
+      }
+
+      // Dark theme code blocks
+      .codeToolbar {
+        background-color: #0d1117;
+
+        pre {
+          background-color: #0d1117;
+          color: #c9d1d9;
+
+          .codeLine {
+            .lineNumber {
+              color: #6e7681;
+
+              &::after {
+                background-color: #30363d; // More prominent in dark theme
+                width: 2px;
+              }
+            }
+          }
+        }
+
+        .toolbar .toolbarItem button {
+          background-color: #21262d;
+          color: #c9d1d9;
+
+          &:hover {
+            background-color: #30363d;
+          }
+        }
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        color: $color-dark-text;
+        border-bottom-color: $color-dark-border;
+      }
+
+      table {
+        th, td {
+          border-color: $color-dark-border;
+        }
+
+        th {
+          background-color: $color-dark-bg-secondary;
+        }
+
+        tr:nth-child(2n) {
+          background-color: $color-dark-bg-secondary;
+        }
+      }
+
+      a {
+        color: $color-dark-link;
+      }
+    }
+
+    .resizer {
+      background-color: $color-dark-border;
+
+      &:hover {
+        background-color: #555;
+      }
+
+      &:active {
+        background-color: $color-dark-link;
+      }
+
+      &::after {
+        background-color: #666;
+      }
+    }
+  }
+
+  // Mobile responsiveness for editor
+  @include respond-to(mobile) {
+    .editorLayout {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .editorPane,
+    .previewPane {
+      min-width: auto;
+      flex: none;
+      height: 50vh;
+    }
+
+    .resizer {
+      width: 100%;
+      height: 6px;
+      cursor: row-resize;
+
+      &::after {
+        width: 30px;
+        height: 2px;
+      }
+    }
+  }
+}

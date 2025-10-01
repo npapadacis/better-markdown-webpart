@@ -1,0 +1,75 @@
+// Blockquote Styles
+// Contains regular blockquotes and styled variants for both light and dark themes
+
+@import './variables';
+@import './mixins';
+
+// Regular blockquote
+blockquote {
+  color: $color-text-secondary;
+  border-left: 0.25em solid #dfe2e5;
+  margin: 0 0 $spacing-md 0;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Wiki.js specific blockquote styles - Panel design with icons
+.blockquote {
+  border-radius: $border-radius-lg;
+  border: none;
+  padding: 0;
+  margin: $spacing-md 0;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+
+  &:global(.is-info) {
+    @include styled-blockquote($color-info-bg, $color-info-border, $color-info-text, "ℹ️ Information");
+  }
+
+  &:global(.is-warning) {
+    @include styled-blockquote($color-warning-bg, $color-warning-border, $color-warning-text, "⚠️ Warning");
+  }
+
+  &:global(.is-danger) {
+    @include styled-blockquote($color-danger-bg, $color-danger-border, $color-danger-text, "🚨 Danger");
+  }
+
+  &:global(.is-success) {
+    @include styled-blockquote($color-success-bg, $color-success-border, $color-success-text, "✅ Success");
+  }
+}
+
+// Dark theme overrides for blockquotes
+.dark {
+  blockquote {
+    border-left-color: #555;
+    background-color: $color-dark-bg-secondary;
+  }
+
+  // Dark mode styles for special blockquotes
+  .blockquote {
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+
+    &:global(.is-info) {
+      @include styled-blockquote($color-dark-info-bg, $color-dark-info-border, $color-dark-info-text, "ℹ️ Information");
+    }
+
+    &:global(.is-warning) {
+      @include styled-blockquote($color-dark-warning-bg, $color-dark-warning-border, $color-dark-warning-text, "⚠️ Warning");
+    }
+
+    &:global(.is-danger) {
+      @include styled-blockquote($color-dark-danger-bg, $color-dark-danger-border, $color-dark-danger-text, "🚨 Danger");
+    }
+
+    &:global(.is-success) {
+      @include styled-blockquote($color-dark-success-bg, $color-dark-success-border, $color-dark-success-text, "✅ Success");
+    }
+  }
+}

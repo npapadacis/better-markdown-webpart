@@ -1,0 +1,137 @@
+// Table Styles
+// Contains table styling for light and dark themes
+
+@import './variables';
+@import './mixins';
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+  margin: $spacing-md 0;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  border: 1px solid #d1d9e0;
+  box-shadow: $shadow-md;
+  font-size: 14px;
+
+  thead {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+    th {
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #495057;
+      border-bottom: 2px solid #dee2e6;
+      position: relative;
+
+      &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 25%;
+        right: 0;
+        width: 1px;
+        height: 50%;
+        background-color: #dee2e6;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background-color: #f8f9fa !important;
+      }
+    }
+  }
+
+  th, td {
+    padding: 12px $spacing-md;
+    border: 1px solid #dee2e6;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  td {
+    border-top: none;
+
+    // Add subtle borders between cells
+    &:not(:last-child) {
+      border-right: 1px solid #f1f3f4;
+    }
+  }
+
+  tr {
+    background-color: $color-background;
+
+    &:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  // Responsive table
+  @include respond-to(mobile) {
+    font-size: 12px;
+
+    th, td {
+      padding: $spacing-sm 12px;
+    }
+  }
+}
+
+// Dark theme overrides for tables
+.dark {
+  table {
+    border: 1px solid $color-dark-border;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+    thead {
+      background: linear-gradient(135deg, $color-dark-bg-secondary 0%, #1a1a1a 100%);
+
+      th {
+        color: #e0e0e0;
+        border-bottom: 2px solid #555;
+
+        &:not(:last-child)::after {
+          background-color: #555;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        &:hover {
+          background-color: #333 !important;
+        }
+      }
+    }
+
+    th, td {
+      border-color: $color-dark-border;
+      color: $color-dark-text;
+    }
+
+    td {
+      &:not(:last-child) {
+        border-right: 1px solid #333;
+      }
+    }
+
+    tr {
+      background-color: $color-dark-bg;
+
+      &:nth-child(even) {
+        background-color: #252525;
+      }
+    }
+  }
+}

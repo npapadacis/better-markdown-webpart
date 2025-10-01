@@ -1,0 +1,27 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "c4d5e6f7-a8b9-4c0d-1e2f-3a4b5c6d7e8f",
+  "alias": "BetterMarkdownWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportsFullBleed": true,
+  "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab", "SharePointFullPage"],
+  "supportsThemeVariants": true,
+  "preconfiguredEntries": [{
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+    "group": { "default": "Content" },
+    "title": { "default": "Better Markdown" },
+    "description": { "default": "Advanced markdown renderer for SharePoint with Mermaid diagrams, math equations, and more" },
+    "officeFabricIconFontName": "EditNote",
+    "properties": {
+      "markdownContent": "[[TOC]]\n# Welcome to Better Markdown\n\nStart editing to see the magic! ✨\n\n## Features\n\n- **Styled blockquotes** with info, warning, danger, and success variants\n- **Mermaid diagrams** for flowcharts and visualizations\n- **Math rendering** with KaTeX ($E=mc^2$)\n- **Table of contents** generation\n- **Syntax highlighting** for code blocks\n- **Footnotes** support\n- **Custom list styles** (grid and links)\n\n## Quick Examples\n\n### Information Blockquote\n> This is important information!\n{.is-info}\n\n## Tables\nWith support for colspan, rowspan and cell alignment\n| Header 1 | Header 2 | Header 3 |\n|----------|:--------:|----------|\n| Content  | Spans two columns  ||\n| ^^       | Cell 3   | Cell 4   |\n| Normal   | Cell     | Content  |\n\n### Code Block\n```javascript\nfunction hello() {\n  console.log('Hello, Better Markdown!');\n}\n```\n\n### Simple Diagram\n```mermaid\ngraph LR\n  A[Start] --> B[Process]\n  B --> C[End]\n```\n\nEdit this web part's properties to customize!",
+      "enableMermaid": true,
+      "enableMath": true,
+      "enableTOC": true,
+      "enableSyntaxHighlighting": true,
+      "theme": "light"
+    }
+  }]
+}

@@ -1,0 +1,24 @@
+// Dark Theme Overrides
+// Contains dark theme styles for components NOT already in component files
+
+@import './variables';
+@import './mixins';
+
+.dark {
+  background-color: $color-dark-bg;
+  color: $color-dark-text;
+
+  .layout,
+  .container {
+    background-color: $color-dark-bg;
+  }
+
+  code {
+    background-color: $color-dark-bg-secondary;
+    color: $color-dark-text;
+  }
+
+  .codeToolbar pre {
+    border: 1px solid #ccc;
+  }
+}

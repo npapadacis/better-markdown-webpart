@@ -1,0 +1,95 @@
+// Layout Styles
+// Contains layout structure, grid, container, tocSidebar, and mainContent styles
+
+@import './variables';
+@import './mixins';
+
+// Layout structure for wiki.js 2.5 style
+.layout {
+  display: flex;
+  gap: 20px;
+  max-width: 100%;
+  padding: 20px;
+  background-color: $color-background;
+  position: relative;
+
+  // Responsive design
+  @include respond-to(tablet) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0; // Prevent flex item from overflowing
+  max-width: calc(100vw - 280px); // Reserve space for fixed TOC
+
+  @include respond-to(desktop) {
+    max-width: calc(100vw - 240px);
+  }
+
+  @include respond-to(tablet) {
+    max-width: 100%;
+    margin-right: 0; // Remove margin on mobile when TOC is above content
+  }
+}
+
+.tocSidebar {
+  width: 260px;
+  flex-shrink: 0;
+  position: fixed;
+  top: 200px;
+  right: 50px;
+  height: fit-content;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  z-index: 1000;
+  transition: right $transition-normal;
+
+  // When property pane is open, move TOC to the left
+  &.propertyPaneOpen {
+    right: 350px; // Move left to avoid property pane (typically 320px wide + some margin)
+
+    @include respond-to(wide) {
+      right: 330px;
+    }
+
+    @include respond-to(desktop) {
+      right: 310px;
+    }
+  }
+
+  // Responsive design
+  @include respond-to(desktop) {
+    width: 220px;
+    right: 15px;
+
+    &.propertyPaneOpen {
+      right: 310px;
+    }
+  }
+
+  @include respond-to(tablet) {
+    position: relative;
+    width: 100%;
+    order: -1; // Move TOC above content on mobile
+    top: 0;
+    right: auto;
+    max-height: none;
+    margin-bottom: 20px;
+    z-index: auto;
+
+    // On mobile, hide TOC when property pane is open to avoid clutter
+    &.propertyPaneOpen {
+      display: none;
+    }
+  }
+}
+
+// Legacy container for backward compatibility
+.container {
+  max-width: 100%;
+  padding: 20px;
+  background-color: $color-background;
+}

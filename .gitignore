@@ -1,0 +1,100 @@
+# Better Markdown for SharePoint - Git Ignore File
+
+# Build output
+dist/
+lib/
+release/
+temp/
+.heft/
+
+# SharePoint package
+*.sppkg
+sharepoint/solution/*.sppkg
+sharepoint/solution/debug/
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+.ntvs_analysis.dat
+
+# Visual Studio files
+bin/
+obj/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Generated TypeScript files
+*.resx.ts
+*.scss.ts
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build files
+*.js.map
+*.d.ts.map
+
+# Compiled CSS
+*.css.map
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Certificate files (keep dev cert out of repo)
+*.pfx
+*.cer
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Windows specific
+$RECYCLE.BIN/
+ehthumbs.db
+
+# macOS specific
+.AppleDouble
+.LSOverride
+._*
+
+# Linux specific
+.directory
+.Trash-*
+
+# Git merge files
+*.orig

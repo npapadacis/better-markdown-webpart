@@ -1,0 +1,126 @@
+// Code Styles
+// Contains code blocks, syntax highlighting, and codeToolbar styles
+
+@import './variables';
+@import './mixins';
+
+// Inline code
+code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: $border-radius-sm;
+  font-family: $font-family-mono;
+}
+
+// Code toolbar container (matches your reference)
+.codeToolbar {
+  position: relative;
+  margin: 1rem 0;
+
+  // Main pre element with line numbers
+  pre {
+    position: relative;
+    border: none;
+    border-radius: $border-radius-md;
+    box-shadow: inset 1px 1px 0.5em #000;
+    background-color: #212121;
+    padding: 1rem 1rem 1rem 3.8rem;
+    margin: 0;
+    overflow: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #fff;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-shadow: 0 -0.1em 0.2em #000;
+    counter-reset: linenumber;
+
+    code {
+      display: block;
+      padding: 0;
+      margin: 0;
+      background-color: transparent;
+      color: #fff;
+      font-size: 0.85rem;
+      font-family: $font-family-code;
+      box-shadow: none;
+      position: relative;
+      white-space: inherit;
+      line-height: 0;
+
+      // Line number structure
+      .codeLine {
+        display: block;
+        line-height: 1.5;
+        position: relative;
+
+        .lineNumber {
+          position: absolute;
+          left: -3.8em;
+          width: 3em;
+          text-align: right;
+          color: #999;
+          border-right: 1px solid #999;
+          padding-right: 0.5em;
+          user-select: none;
+          font-size: 100%;
+          letter-spacing: -1px;
+          pointer-events: none;
+        }
+
+        .lineContent {
+          display: inline-block;
+          white-space: pre;
+          width: 100%;
+          padding-left: 1em; // Add margin between line numbers and code
+        }
+      }
+    }
+  }
+
+  // Toolbar for copy button
+  .toolbar {
+    position: absolute;
+    top: 0.3em;
+    right: 0.2em;
+    transition: opacity $transition-normal ease-in-out;
+    opacity: 0;
+
+    .toolbarItem {
+      display: inline-block;
+
+      button {
+        background: rgba(224, 224, 224, 0.2);
+        color: #bbb;
+        font-size: 0.8em;
+        border: 0;
+        border-radius: 0.5em;
+        padding: 0 0.5em;
+        cursor: pointer;
+        transition: all $transition-fast;
+
+        &:hover {
+          background: rgba(224, 224, 224, 0.4);
+          color: #fff;
+        }
+
+        &:focus {
+          outline: 1px solid #fff;
+        }
+      }
+    }
+  }
+
+  // Show toolbar on hover
+  &:hover .toolbar {
+    opacity: 1;
+  }
+}
+
+// Code block for generic display
+.codeBlock {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+}

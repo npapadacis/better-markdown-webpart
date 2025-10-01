@@ -1,0 +1,80 @@
+// Color Variables
+$color-text-primary: #24292e;
+$color-text-secondary: #6a737d;
+$color-background: #ffffff;
+$color-border: #e1e4e8;
+$color-link: #0366d6;
+
+// Dark Theme Colors
+$color-dark-bg: #1e1e1e;
+$color-dark-bg-secondary: #2d2d2d;
+$color-dark-text: #d4d4d4;
+$color-dark-text-secondary: #a0a0a0;
+$color-dark-border: #444;
+$color-dark-link: #66b3ff;
+
+// Blockquote Colors (Light)
+$color-info-bg: #e3f2fd;
+$color-info-border: #2196f3;
+$color-info-text: #0d47a1;
+
+$color-warning-bg: #fff3e0;
+$color-warning-border: #ff9800;
+$color-warning-text: #e65100;
+
+$color-danger-bg: #ffebee;
+$color-danger-border: #f44336;
+$color-danger-text: #c62828;
+
+$color-success-bg: #e8f5e9;
+$color-success-border: #4caf50;
+$color-success-text: #1b5e20;
+
+// Blockquote Colors (Dark)
+$color-dark-info-bg: #1a237e;
+$color-dark-info-border: #3f51b5;
+$color-dark-info-text: #bbdefb;
+
+$color-dark-warning-bg: #e65100;
+$color-dark-warning-border: #ff9800;
+$color-dark-warning-text: #fff3e0;
+
+$color-dark-danger-bg: #b71c1c;
+$color-dark-danger-border: #f44336;
+$color-dark-danger-text: #ffcdd2;
+
+$color-dark-success-bg: #1b5e20;
+$color-dark-success-border: #4caf50;
+$color-dark-success-text: #c8e6c9;
+
+// Typography
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+$font-family-code: 'Roboto Mono', monospace;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Border Radius
+$border-radius-sm: 3px;
+$border-radius-md: 5px;
+$border-radius-lg: 8px;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// Breakpoints
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 992px;
+$breakpoint-desktop: 1200px;
+$breakpoint-wide: 1400px;

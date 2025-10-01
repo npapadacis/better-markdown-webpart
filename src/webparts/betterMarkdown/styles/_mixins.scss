@@ -1,0 +1,64 @@
+// Responsive breakpoint mixin
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: $breakpoint-mobile) {
+      @content;
+    }
+  } @else if $breakpoint == tablet {
+    @media (max-width: $breakpoint-tablet) {
+      @content;
+    }
+  } @else if $breakpoint == desktop {
+    @media (max-width: $breakpoint-desktop) {
+      @content;
+    }
+  } @else if $breakpoint == wide {
+    @media (max-width: $breakpoint-wide) {
+      @content;
+    }
+  }
+}
+
+// Card/Panel styling
+@mixin card($background, $border) {
+  background-color: $background;
+  border-radius: $border-radius-lg;
+  border: 1px solid $border;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+// Styled blockquote mixin
+@mixin styled-blockquote($bg-color, $border-color, $text-color, $label) {
+  background-color: $bg-color;
+  border: 1px solid $border-color;
+  color: $text-color;
+
+  &::before {
+    content: $label;
+    display: block;
+    background-color: $border-color;
+    color: white;
+    padding: 12px 16px;
+    margin: 0;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  > * {
+    padding: $spacing-md;
+    margin: 0;
+  }
+}
+
+// Hover effect
+@mixin hover-lift {
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+}

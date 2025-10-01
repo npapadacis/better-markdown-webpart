@@ -1,0 +1,104 @@
+// Mermaid Diagram Styles
+// Contains Mermaid diagram container and error styling
+
+@import './variables';
+@import './mixins';
+
+// Mermaid diagrams
+.mermaidContainer {
+  margin: 1rem 0;
+  text-align: center;
+  overflow-x: auto;
+
+  svg {
+    max-width: 100%;
+    height: auto;
+
+    // Improve text display in mermaid diagrams
+    .node {
+      rect, circle, ellipse, polygon {
+        stroke-width: 2px;
+      }
+
+      .label {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+
+        // Handle text wrapping
+        foreignObject {
+          overflow: visible;
+
+          div {
+            word-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+            text-align: center;
+            padding: $spacing-xs $spacing-sm;
+            line-height: 1.2;
+          }
+        }
+      }
+    }
+
+    // Improve text in different mermaid diagram types
+    .flowchart-label,
+    .nodeLabel {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      word-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    // Ensure text containers are properly sized
+    .label-container,
+    .node-label {
+      overflow: visible;
+
+      foreignObject {
+        overflow: visible;
+      }
+    }
+
+    // Fix for specific mermaid elements
+    text {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+
+      &.nodeLabel {
+        dominant-baseline: middle;
+        text-anchor: middle;
+      }
+    }
+  }
+}
+
+.mermaidError {
+  background-color: $color-danger-bg;
+  border: 1px solid $color-danger-border;
+  border-radius: $border-radius-sm;
+  padding: 1rem;
+  color: $color-danger-text;
+  font-family: monospace;
+}
+
+// Math rendering
+.mathBlock {
+  margin: 1rem 0;
+  padding: 1rem;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.mathError {
+  background-color: $color-danger-bg;
+  border: 1px solid $color-danger-border;
+  border-radius: $border-radius-sm;
+  padding: 0.5rem;
+  color: $color-danger-text;
+  font-family: monospace;
+}

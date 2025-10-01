@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "18.20.8",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.24.0"
+    },
+    "version": "1.20.0",
+    "libraryName": "better-markdown-webpart",
+    "libraryId": "12c2c723-8a78-454a-ae39-e13c7294c04c",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "better-markdown-webpart",
+    "solutionShortDescription": "Better Markdown for SharePoint with Mermaid, Math, and TOC support",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

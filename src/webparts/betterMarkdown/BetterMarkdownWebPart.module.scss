@@ -1,0 +1,42 @@
+// Better Markdown for SharePoint - Main Styles
+// Modular SCSS architecture for maintainability
+// Each component is split into its own partial for easier maintenance
+
+// Base imports
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+// Variables and utilities
+@import './styles/variables';
+@import './styles/mixins';
+
+// Base styles
+.betterMarkdown {
+  font-family: $font-family-base;
+  font-size: 16px;
+  line-height: 1.6;
+  color: $color-text-primary;
+}
+
+// Component imports - organized by functionality
+@import './styles/layout';
+@import './styles/typography';
+@import './styles/code';
+@import './styles/blockquotes';
+@import './styles/tables';
+@import './styles/lists';
+@import './styles/toc';
+@import './styles/mermaid';
+@import './styles/editor';
+@import './styles/dark-theme';
+
+// Utility classes
+.betterMarkdown {
+  .error {
+    background-color: $color-danger-bg;
+    border: 1px solid $color-danger-border;
+    border-radius: $border-radius-sm;
+    padding: 1rem;
+    color: $color-danger-text;
+    margin: 1rem 0;
+  }
+}

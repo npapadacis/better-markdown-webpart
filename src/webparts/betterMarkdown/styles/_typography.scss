@@ -1,0 +1,71 @@
+// Typography Styles
+// Contains heading, paragraph, link, and basic text styles
+
+@import './variables';
+@import './mixins';
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-md;
+  font-weight: 600;
+  line-height: 1.25;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1em;
+}
+
+h5 {
+  font-size: 0.875em;
+}
+
+h6 {
+  font-size: 0.85em;
+  color: $color-text-secondary;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: $spacing-md;
+}
+
+a {
+  color: $color-link;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+img {
+  max-width: 100%;
+  box-sizing: content-box;
+  background-color: $color-background;
+}
+
+hr {
+  height: 0.25em;
+  padding: 0;
+  margin: $spacing-lg 0;
+  background-color: #e1e4e8;
+  border: 0;
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "better-markdown-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/betterMarkdown/BetterMarkdownWebPart.js",
+          "manifest": "./src/webparts/betterMarkdown/BetterMarkdownWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {
+    "mermaid": {
+      "path": "https://cdn.jsdelivr.net/npm/mermaid@11.12.0/dist/mermaid.min.js",
+      "globalName": "mermaid"
+    }
+  },
+  "localizedResources": {
+    "BetterMarkdownWebPartStrings": "lib/webparts/betterMarkdown/loc/{locale}.js"
+  }
+}
