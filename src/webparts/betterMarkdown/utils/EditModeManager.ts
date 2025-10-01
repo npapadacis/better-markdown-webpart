@@ -19,6 +19,9 @@ export class EditModeManager {
   private options: IEditModeManagerOptions;
   private monacoEditor: any = null;
   private editorContent: string = '';
+  private isEditorCollapsed: boolean = false;
+  private isSyncingFromEditor: boolean = false;
+  private isSyncingFromPreview: boolean = false;
 
   constructor(options: IEditModeManagerOptions) {
     this.options = options;
@@ -39,7 +42,9 @@ export class EditModeManager {
           <div class="${this.options.styles.editorHeader}">
             <h3>Markdown Editor</h3>
             <div class="${this.options.styles.editorActions}">
-              <button id="saveContent" class="${this.options.styles.saveButton}">Save</button>
+              <button id="importMdFile" class="${this.options.styles.editorActionButton}" title="Import .md file">📁 Import</button>
+              <button id="toggleEditor" class="${this.options.styles.editorActionButton}" title="Collapse/Expand editor">◀️ Collapse</button>
+              <button id="saveContent" class="${this.options.styles.saveButton}">💾 Save</button>
             </div>
           </div>
           <div id="monacoContainer" class="${this.options.styles.monacoContainer}"></div>
@@ -48,6 +53,7 @@ export class EditModeManager {
         <div class="${this.options.styles.previewPane}">
           <div class="${this.options.styles.previewHeader}">
             <h3>Live Preview</h3>
+            <button id="exportPdfEdit" class="${this.options.styles.exportButton}" title="Export as PDF">📄 Export PDF</button>
           </div>
           <div class="${this.options.styles.previewContainer}">
             <div id="previewContent" class="${this.options.styles.previewContent}">
@@ -59,30 +65,41 @@ export class EditModeManager {
       </div>
     </div>`;
 
+    // Add export PDF button functionality
+    const exportPdfButton = domElement.querySelector('#exportPdfEdit') as HTMLButtonElement;
+    if (exportPdfButton) {
+      exportPdfButton.addEventListener('click', () => {
+        void this.exportToPdf(tocHtml, mainHtml);
+      });
+    }
+
     // Add editor functionality
     await this.initializeMonacoEditor(domElement);
-    
+
     // Enhance the initial content
     await this.enhanceInitialContent(domElement);
   }
 
   private async enhanceInitialContent(domElement: HTMLElement): Promise<void> {
     console.log('🎨 EditMode: Enhancing initial content...');
-    
+
     // Enhancement target should be the entire editor layout
     const editorLayout = domElement.querySelector(`.${this.options.styles.editorLayout}`) as HTMLElement;
-    
+
     if (editorLayout) {
       // Add copy button functionality to code blocks
       this.options.codeBlockEnhancer.addCopyButtonFunctionality(editorLayout);
-      
+
       // Update TOC position - initial positioning without animation
       this.updateTOCPosition(domElement, this.options.propertyPaneDetector.isPropertyPaneOpen(), true);
-      
+
+      // Add TOC click handlers for scroll sync
+      this.addTOCClickHandlers(domElement);
+
       // Render Mermaid diagrams for initial content
       if (this.options.properties.enableMermaid) {
         console.log('🎨 EditMode: Rendering initial Mermaid diagrams...');
-        
+
         setTimeout(async () => {
           try {
             await this.options.mermaidRenderer.renderDiagrams(editorLayout, this.options.styles.mermaidError);
@@ -95,13 +112,34 @@ export class EditModeManager {
     }
   }
 
+  private addTOCClickHandlers(domElement: HTMLElement): void {
+    const tocSidebar = domElement.querySelector(`.${this.options.styles.tocSidebar}`) as HTMLElement;
+    if (!tocSidebar) return;
+
+    const tocLinks = tocSidebar.querySelectorAll('a[href^="#"]');
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        // Let the default scroll behavior happen
+        // Then sync the editor position after a short delay
+        setTimeout(() => {
+          const previewContent = domElement.querySelector('#previewContent') as HTMLElement;
+          if (previewContent) {
+            this.syncEditorToPreview(previewContent);
+          }
+        }, 100);
+      });
+    });
+  }
+
   private async initializeMonacoEditor(domElement: HTMLElement): Promise<void> {
     const container = domElement.querySelector('#monacoContainer') as HTMLElement;
     const previewContent = domElement.querySelector('#previewContent') as HTMLElement;
     const saveButton = domElement.querySelector('#saveContent') as HTMLButtonElement;
+    const toggleButton = domElement.querySelector('#toggleEditor') as HTMLButtonElement;
+    const importButton = domElement.querySelector('#importMdFile') as HTMLButtonElement;
     const resizer = domElement.querySelector(`.${this.options.styles.resizer}`) as HTMLElement;
-    
-    if (!container || !previewContent || !saveButton) return;
+
+    if (!container || !previewContent || !saveButton || !toggleButton || !importButton) return;
 
     try {
       console.log('📝 EditMode: Initializing Monaco Editor...');
@@ -134,15 +172,41 @@ export class EditModeManager {
         }, 300);
       });
 
+      // Scroll sync: preview follows editor cursor
+      this.monacoEditor.onDidChangeCursorPosition(() => {
+        this.syncPreviewToEditor(previewContent);
+      });
+
+      // Scroll sync: preview follows editor scroll
+      this.monacoEditor.onDidScrollChange(() => {
+        this.syncPreviewToEditor(previewContent);
+      });
+
+      // Bidirectional scroll sync: editor follows preview scroll
+      previewContent.addEventListener('scroll', () => {
+        this.syncEditorToPreview(previewContent);
+      });
+
       // Save functionality
       saveButton.addEventListener('click', () => {
         const content = this.monacoEditor.getValue();
         this.options.onPropertyChange('markdownContent', content);
         this.options.onPropertyPaneRefresh();
-        saveButton.textContent = 'Saved!';
+        const originalText = saveButton.textContent;
+        saveButton.textContent = '✅ Saved!';
         setTimeout(() => {
-          saveButton.textContent = 'Save';
+          saveButton.textContent = originalText;
         }, 2000);
+      });
+
+      // Toggle editor collapse/expand
+      toggleButton.addEventListener('click', () => {
+        this.toggleEditorCollapse(domElement, toggleButton);
+      });
+
+      // Import .md file
+      importButton.addEventListener('click', () => {
+        this.importMarkdownFile();
       });
 
       // Keyboard shortcuts
@@ -162,6 +226,69 @@ export class EditModeManager {
       console.error('❌ EditMode: Failed to initialize Monaco Editor:', error);
       // Fallback to textarea if Monaco fails
       this.renderFallbackEditor(container, previewContent, saveButton, resizer, domElement);
+    }
+  }
+
+  private syncPreviewToEditor(previewElement: HTMLElement): void {
+    if (!this.monacoEditor || this.isSyncingFromPreview) return;
+
+    try {
+      this.isSyncingFromEditor = true;
+
+      // Get cursor position in editor
+      const position = this.monacoEditor.getPosition();
+      if (!position) return;
+
+      const currentLine = position.lineNumber;
+      const totalLines = this.monacoEditor.getModel().getLineCount();
+
+      // Calculate scroll percentage based on cursor position
+      const scrollPercentage = currentLine / totalLines;
+
+      // previewElement is #previewContent which has overflow-y: auto
+      // Use its scrollHeight which represents the full content height
+      const maxScroll = previewElement.scrollHeight - previewElement.clientHeight;
+      const targetScroll = maxScroll * scrollPercentage;
+
+      // Smooth scroll to position
+      previewElement.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth'
+      });
+
+      setTimeout(() => {
+        this.isSyncingFromEditor = false;
+      }, 100);
+    } catch (e) {
+      console.error('EditMode: Scroll sync error:', e);
+      this.isSyncingFromEditor = false;
+    }
+  }
+
+  private syncEditorToPreview(previewElement: HTMLElement): void {
+    if (!this.monacoEditor || this.isSyncingFromEditor) return;
+
+    try {
+      this.isSyncingFromPreview = true;
+
+      // Calculate scroll percentage from preview
+      const scrollTop = previewElement.scrollTop;
+      const maxScroll = previewElement.scrollHeight - previewElement.clientHeight;
+      const scrollPercentage = maxScroll > 0 ? scrollTop / maxScroll : 0;
+
+      // Calculate target line in editor
+      const totalLines = this.monacoEditor.getModel().getLineCount();
+      const targetLine = Math.max(1, Math.round(scrollPercentage * totalLines));
+
+      // Scroll editor to target line
+      this.monacoEditor.revealLineInCenter(targetLine);
+
+      setTimeout(() => {
+        this.isSyncingFromPreview = false;
+      }, 100);
+    } catch (e) {
+      console.error('EditMode: Reverse scroll sync error:', e);
+      this.isSyncingFromPreview = false;
     }
   }
 
@@ -196,7 +323,10 @@ export class EditModeManager {
       
       // Update TOC position based on current property pane state (skip animation during dynamic updates)
       this.updateTOCPosition(domElement, this.options.propertyPaneDetector.isPropertyPaneOpen(), true);
-      
+
+      // Re-add TOC click handlers since TOC was regenerated
+      this.addTOCClickHandlers(domElement);
+
       // Render Mermaid diagrams
       if (this.options.properties.enableMermaid) {
         console.log('🎨 EditMode: Mermaid enabled, checking for diagrams in preview...');
@@ -303,42 +433,50 @@ export class EditModeManager {
     let startX = 0;
     let startLeftWidth = 0;
 
+    const handleMouseMove = (e: MouseEvent): void => {
+      if (!isResizing) return;
+      const dx = e.clientX - startX;
+      const editorPane = domElement.querySelector(`.${this.options.styles.editorPane}`) as HTMLElement;
+      const previewPane = domElement.querySelector(`.${this.options.styles.previewPane}`) as HTMLElement;
+
+      if (editorPane && previewPane) {
+        const newWidth = startLeftWidth + dx;
+        const editorLayout = domElement.querySelector(`.${this.options.styles.editorLayout}`) as HTMLElement;
+        const containerWidth = editorLayout ? editorLayout.offsetWidth : domElement.offsetWidth;
+        const minWidth = 200;
+        const maxWidth = containerWidth - 200;
+
+        if (newWidth >= minWidth && newWidth <= maxWidth) {
+          editorPane.style.width = `${newWidth}px`;
+          editorPane.style.flex = 'none';
+          previewPane.style.flex = 'none';
+          previewPane.style.width = `${containerWidth - newWidth - 10}px`; // 10px for resizer
+
+          // Trigger Monaco layout update
+          if (this.monacoEditor) {
+            this.monacoEditor.layout();
+          }
+        }
+      }
+    };
+
+    const handleMouseUp = (): void => {
+      isResizing = false;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
     resizer.addEventListener('mousedown', (e) => {
       isResizing = true;
       startX = e.clientX;
       const editorPane = domElement.querySelector(`.${this.options.styles.editorPane}`) as HTMLElement;
       if (editorPane) {
-        startLeftWidth = parseInt(window.getComputedStyle(editorPane).width, 10);
+        startLeftWidth = editorPane.offsetWidth;
       }
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       e.preventDefault();
     });
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing) return;
-      const dx = e.clientX - startX;
-      const editorPane = domElement.querySelector(`.${this.options.styles.editorPane}`) as HTMLElement;
-      const previewPane = domElement.querySelector(`.${this.options.styles.previewPane}`) as HTMLElement;
-      
-      if (editorPane && previewPane) {
-        const newWidth = startLeftWidth + dx;
-        const containerWidth = domElement.offsetWidth;
-        const minWidth = 200;
-        const maxWidth = containerWidth - 200;
-        
-        if (newWidth >= minWidth && newWidth <= maxWidth) {
-          editorPane.style.width = `${newWidth}px`;
-          previewPane.style.width = `${containerWidth - newWidth - 10}px`; // 10px for resizer
-        }
-      }
-    };
-
-    const handleMouseUp = () => {
-      isResizing = false;
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
   }
 
   private autoResizeTextarea(textarea: HTMLTextAreaElement): void {
@@ -370,6 +508,274 @@ export class EditModeManager {
     const editorLayout = document.querySelector(`.${this.options.styles.editorLayout}`) as HTMLElement;
     if (editorLayout) {
       this.updateTOCPosition(editorLayout.parentElement || document.body, isOpen, false); // Allow animation for manual property pane changes
+    }
+  }
+
+  private toggleEditorCollapse(domElement: HTMLElement, toggleButton: HTMLButtonElement): void {
+    const editorPane = domElement.querySelector(`.${this.options.styles.editorPane}`) as HTMLElement;
+    const previewPane = domElement.querySelector(`.${this.options.styles.previewPane}`) as HTMLElement;
+    const resizer = domElement.querySelector(`.${this.options.styles.resizer}`) as HTMLElement;
+    const monacoContainer = domElement.querySelector('#monacoContainer') as HTMLElement;
+    const editorHeader = domElement.querySelector(`.${this.options.styles.editorHeader}`) as HTMLElement;
+    const headerTitle = editorHeader?.querySelector('h3') as HTMLElement;
+    const importButton = domElement.querySelector('#importMdFile') as HTMLButtonElement;
+    const saveButton = domElement.querySelector('#saveContent') as HTMLButtonElement;
+
+    if (!editorPane || !previewPane) return;
+
+    this.isEditorCollapsed = !this.isEditorCollapsed;
+
+    if (this.isEditorCollapsed) {
+      // Collapse editor
+      editorPane.style.flex = 'none';
+      editorPane.style.width = '50px';
+      editorPane.style.minWidth = '50px';
+      previewPane.style.flex = '1';
+      previewPane.style.width = 'auto';
+      if (resizer) resizer.style.display = 'none';
+      if (monacoContainer) monacoContainer.style.display = 'none';
+
+      // Make header vertical with icon-only buttons
+      if (editorHeader) {
+        editorHeader.style.flexDirection = 'column';
+        editorHeader.style.alignItems = 'center';
+        editorHeader.style.padding = '12px 4px';
+        editorHeader.style.gap = '8px';
+      }
+      if (headerTitle) {
+        headerTitle.style.writingMode = 'vertical-rl';
+        headerTitle.style.textOrientation = 'mixed';
+        headerTitle.style.fontSize = '12px';
+        headerTitle.style.whiteSpace = 'nowrap';
+      }
+
+      // Update buttons to icon-only
+      if (importButton) importButton.textContent = '📁';
+      if (toggleButton) {
+        toggleButton.textContent = '▶️';
+        toggleButton.title = 'Expand editor';
+      }
+      if (saveButton) saveButton.textContent = '💾';
+    } else {
+      // Expand editor
+      editorPane.style.flex = '1';
+      editorPane.style.width = '';
+      editorPane.style.minWidth = '200px';
+      previewPane.style.flex = '1';
+      previewPane.style.width = '';
+      if (resizer) resizer.style.display = 'block';
+      if (monacoContainer) monacoContainer.style.display = 'flex';
+
+      // Restore header to horizontal
+      if (editorHeader) {
+        editorHeader.style.flexDirection = '';
+        editorHeader.style.alignItems = '';
+        editorHeader.style.padding = '';
+        editorHeader.style.gap = '';
+      }
+      if (headerTitle) {
+        headerTitle.style.writingMode = '';
+        headerTitle.style.textOrientation = '';
+        headerTitle.style.fontSize = '';
+        headerTitle.style.whiteSpace = '';
+      }
+
+      // Restore button text
+      if (importButton) importButton.textContent = '📁 Import';
+      if (toggleButton) {
+        toggleButton.textContent = '◀️ Collapse';
+        toggleButton.title = 'Collapse editor';
+      }
+      if (saveButton) saveButton.textContent = '💾 Save';
+    }
+
+    // Trigger Monaco layout update
+    if (this.monacoEditor) {
+      setTimeout(() => {
+        this.monacoEditor.layout();
+      }, 300);
+    }
+  }
+
+  private importMarkdownFile(): void {
+    // Create a hidden file input
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.md,.markdown,.txt';
+    fileInput.style.display = 'none';
+
+    fileInput.addEventListener('change', (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const content = e.target?.result as string;
+        if (content && this.monacoEditor) {
+          this.monacoEditor.setValue(content);
+          this.editorContent = content;
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Trigger file selection dialog
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    document.body.removeChild(fileInput);
+  }
+
+  private async exportToPdf(tocHtml: string, mainHtml: string): Promise<void> {
+    try {
+      // Get the current rendered content from the preview
+      const previewContent = document.querySelector('#previewContent') as HTMLElement;
+      if (previewContent) {
+        mainHtml = previewContent.innerHTML;
+      }
+
+      // Get TOC if present
+      const tocSidebar = document.querySelector(`.${this.options.styles.tocSidebar}`) as HTMLElement;
+      if (tocSidebar) {
+        tocHtml = tocSidebar.innerHTML;
+      }
+
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      if (!printWindow) {
+        alert('Please allow popups to export PDF');
+        return;
+      }
+
+      // Get the current styles by reading the computed styles
+      const styleSheets = Array.from(document.styleSheets)
+        .map(sheet => {
+          try {
+            return Array.from(sheet.cssRules)
+              .map(rule => rule.cssText)
+              .join('\n');
+          } catch (e) {
+            return '';
+          }
+        })
+        .join('\n');
+
+      // Build the print document with TOC as first page
+      const printContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Export - Better Markdown</title>
+  <style>
+    ${styleSheets}
+
+    /* Print-specific styles */
+    @media print {
+      @page {
+        margin: 1in;
+        size: letter;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      .toc-page {
+        page-break-after: always;
+        padding: 2rem;
+      }
+
+      .toc-page h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #333;
+        padding-bottom: 1rem;
+      }
+
+      .content-page {
+        padding: 2rem;
+      }
+
+      /* Ensure code blocks don't break across pages */
+      pre, blockquote, table {
+        page-break-inside: avoid;
+      }
+
+      /* Hide interactive elements */
+      button, .toolbar, .toolbarItem {
+        display: none !important;
+      }
+
+      /* Adjust link colors for print */
+      a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+
+      a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+      }
+    }
+
+    @media screen {
+      body {
+        padding: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      .print-instructions {
+        background: #e3f2fd;
+        border: 2px solid #2196f3;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-radius: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-instructions">
+    <h3>📄 Export to PDF Instructions:</h3>
+    <ol>
+      <li>Press <strong>Ctrl+P</strong> (or Cmd+P on Mac) to open the print dialog</li>
+      <li>Select "Save as PDF" as the destination</li>
+      <li>Adjust settings if needed (margins, headers/footers)</li>
+      <li>Click "Save"</li>
+    </ol>
+  </div>
+
+  ${tocHtml ? `
+  <div class="toc-page">
+    <h2>📑 Table of Contents</h2>
+    ${tocHtml}
+  </div>
+  ` : ''}
+
+  <div class="content-page">
+    ${mainHtml}
+  </div>
+</body>
+</html>`;
+
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+
+      // Wait for content to load, then show print dialog
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      };
+
+    } catch (e) {
+      console.error('PDF export error:', e);
+      alert('Failed to export PDF. Please try again.');
     }
   }
 }

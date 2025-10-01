@@ -48,17 +48,17 @@ This will install:
 
 ### Step 3: Configure Your Tenant (Optional but Recommended)
 
-For a better development experience, set up your tenant URL:
+For a better development experience, set up your tenant using environment variables:
 
 ```bash
 # Copy the example file
-cp config/serve.local.json.example config/serve.local.json
+cp .env.example .env
 
-# Edit config/serve.local.json and replace 'yourtenant' with your actual tenant name
-# Example: "https://contoso.sharepoint.com/_layouts/workbench.aspx"
+# Edit .env and set your tenant name (without .sharepoint.com)
+# Example: SPFX_SERVE_TENANT_DOMAIN=contoso
 ```
 
-**Note:** `serve.local.json` is git-ignored, so your tenant info stays private.
+**Note:** `.env` is git-ignored, so your tenant info stays private. This uses the official SPFx environment variable `SPFX_SERVE_TENANT_DOMAIN`.
 
 ### Step 4: Trust the Development Certificate
 
@@ -79,7 +79,7 @@ gulp trust-dev-cert
 gulp serve
 ```
 
-**Note:** If you created `serve.local.json`, it will automatically open your SharePoint tenant workbench. Otherwise, it uses the placeholder from `serve.json`.
+**Note:** If you set `SPFX_SERVE_TENANT_DOMAIN` in your `.env` file, it will automatically open your SharePoint tenant workbench. Otherwise, it uses the `{tenantDomain}` placeholder.
 
 This will:
 1. Build the project

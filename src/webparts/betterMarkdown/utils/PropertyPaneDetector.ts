@@ -92,6 +92,7 @@ export class PropertyPaneDetector {
       '[class*="PropertyPane"]:not([class*="Container"]):not(aside)',
       '[data-automation-id*="propertyPane"]:not([data-automation-id*="Container"]):not(aside)',
       '[data-automation-id*="PropertyPane"]:not([data-automation-id*="Container"]):not(aside)',
+      '[data-automation-id*="SPContentPanelView-panelOpened"]',
       '.ms-Panel:not([class*="Container"]):not(aside)',
       '[class*="Panel"][class*="property"]:not([class*="Container"]):not(aside)',
       '[aria-label*="property" i][aria-label*="pane" i]:not([class*="Container"]):not(aside)'
@@ -197,6 +198,7 @@ export class PropertyPaneDetector {
       '[class*="PropertyPane"]:not([class*="Container"]):not(aside)',
       '[data-automation-id*="propertyPane"]:not([data-automation-id*="Container"]):not(aside)',
       '[data-automation-id*="PropertyPane"]:not([data-automation-id*="Container"]):not(aside)',
+      '[data-automation-id*="SPContentPanelView-panelOpened"]',
       '.ms-Panel:not([class*="Container"]):not(aside)',
       '[class*="Panel"][class*="property"]:not([class*="Container"]):not(aside)',
       '[aria-label*="property" i][aria-label*="pane" i]:not([class*="Container"]):not(aside)'

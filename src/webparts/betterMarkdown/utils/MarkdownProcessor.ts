@@ -1,8 +1,5 @@
 import { escape } from '@microsoft/sp-lodash-subset';
 
-// Mermaid is loaded from CDN as external
-declare const mermaid: any;
-
 // Use require for better compatibility with SPFx
 const MarkdownIt = require('markdown-it');
 const markdownItAttrs = require('markdown-it-attrs');
@@ -157,11 +154,6 @@ export class MarkdownProcessor {
 
   private setupCustomRenderers(): void {
     // Custom renderer for Wiki.js-style blockquotes
-    const defaultBlockquoteOpen = this.md.renderer.rules.blockquote_open || 
-      function(tokens: any, idx: number, options: any, env: any, self: any) {
-        return self.renderToken(tokens, idx, options);
-      };
-    
     this.md.renderer.rules.blockquote_open = (tokens: any, idx: number, options: any, env: any, self: any) => {
       const token = tokens[idx];
       const className = token.attrGet('class') || '';

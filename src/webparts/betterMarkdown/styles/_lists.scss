@@ -29,7 +29,7 @@ li {
 }
 
 // Wiki.js list styles
-.grid-list {
+:global(.grid-list) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 1rem;
@@ -48,7 +48,7 @@ li {
   }
 }
 
-.links-list {
+:global(.links-list) {
   list-style: none;
   padding: 0;
 

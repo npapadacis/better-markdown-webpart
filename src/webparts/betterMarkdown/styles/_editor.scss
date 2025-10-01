@@ -51,11 +51,37 @@
       font-weight: 600;
       color: $color-text-primary;
     }
+
+    .exportButton {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
   }
 
   .editorActions {
     display: flex;
     gap: $spacing-sm;
+    align-items: center;
+  }
+
+  .editorActionButton {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: $spacing-xs;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: #5a6268;
+    }
+
+    &:active {
+      background-color: #545b62;
+    }
   }
 
   .saveButton {
@@ -166,7 +192,6 @@
 
     // Blockquotes
     blockquote {
-      padding: 0 1em;
       color: $color-text-secondary;
       border-left: 4px solid #dfe2e5;
       background-color: #f6f8fa;
@@ -222,22 +247,12 @@
             min-width: 30px;
             position: relative;
             line-height: 1.4; // Reset line height for line numbers
-
-            // Vertical divider after line numbers - more prominent
-            &::after {
-              content: '';
-              position: absolute;
-              right: -8px;
-              top: 0;
-              bottom: 0;
-              width: 2px; // Make more prominent
-              background-color: #666; // Lighter color for better visibility
-            }
           }
 
           .lineContent {
             flex: 1;
             padding-left: $spacing-sm;
+            padding-right: $spacing-sm;
             line-height: 1.4; // Reset line height for content
           }
         }
@@ -472,10 +487,12 @@
             .lineNumber {
               color: #6e7681;
 
+              /*
               &::after {
                 background-color: #30363d; // More prominent in dark theme
                 width: 2px;
               }
+              */
             }
           }
         }

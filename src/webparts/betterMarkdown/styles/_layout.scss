@@ -87,6 +87,38 @@
   }
 }
 
+// Export actions bar for view mode
+.exportActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-background;
+  border-bottom: 1px solid $color-border;
+}
+
+.exportButton {
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: $spacing-xs;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background-color: #106ebe;
+  }
+
+  &:active {
+    background-color: #005a9e;
+  }
+}
+
 // Legacy container for backward compatibility
 .container {
   max-width: 100%;

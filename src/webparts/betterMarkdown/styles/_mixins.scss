@@ -48,8 +48,10 @@
   }
 
   > * {
-    padding: $spacing-md;
+    padding: 0 $spacing-md $spacing-md $spacing-md;
     margin: 0;
+
+    
   }
 }
 
