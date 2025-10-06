@@ -90,10 +90,109 @@
 // Export actions bar for view mode
 .exportActions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: $spacing-sm $spacing-md;
   background-color: $color-background;
   border-bottom: 1px solid $color-border;
+  gap: $spacing-md;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex: 1;
+  color: $color-text-secondary;
+  font-size: 14px;
+  flex-wrap: wrap;
+
+  .fileInfoMain {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .fileInfoLabel {
+    font-weight: 600;
+    color: $color-text-primary;
+  }
+
+  .fileName {
+    color: $color-text-primary;
+    background-color: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: $spacing-xs;
+    font-family: Monaco, Consolas, 'Courier New', monospace;
+    font-size: 13px;
+  }
+
+  .fileMetadata {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: $color-text-secondary;
+
+    .metadataItem {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .metadataLabel {
+        font-weight: 500;
+        color: $color-text-secondary;
+      }
+
+      .metadataValue {
+        color: $color-text-primary;
+      }
+    }
+  }
+}
+
+.historyButton {
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: $spacing-xs;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: #106ebe;
+  }
+
+  &:active {
+    background-color: #005a9e;
+  }
+}
+
+.reloadButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: $spacing-xs;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+
+  &:active {
+    background-color: #545b62;
+  }
 }
 
 .exportButton {
@@ -116,6 +215,147 @@
 
   &:active {
     background-color: #005a9e;
+  }
+}
+
+// Version history modal
+.versionModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.versionModalContent {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 800px;
+  max-height: 80vh;
+  width: 90%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.versionModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0e0e0;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    color: $color-text-primary;
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}
+
+.versionList {
+  overflow-y: auto;
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.versionItem {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background-color: #f8f8f8;
+    border-color: #0078d4;
+  }
+
+  &.currentVersion {
+    background-color: #e3f2fd;
+    border-color: #0078d4;
+  }
+
+  .versionLabel {
+    font-weight: 600;
+    color: $color-text-primary;
+    margin-bottom: 4px;
+  }
+
+  .versionInfo {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: $color-text-secondary;
+    flex-wrap: wrap;
+
+    .versionDate {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .versionAuthor {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  .versionActions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+
+    button {
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background-color: #106ebe;
+      }
+
+      &.viewButton {
+        background-color: #6c757d;
+
+        &:hover {
+          background-color: #5a6268;
+        }
+      }
+    }
   }
 }
 

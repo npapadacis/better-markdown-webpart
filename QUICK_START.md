@@ -6,7 +6,7 @@ Get the Better Markdown web part up and running in your SharePoint environment i
 
 Before you begin, ensure you have:
 
-- **Node.js** - Version 16.x or 18.x LTS ([Download](https://nodejs.org/))
+- **Node.js** - Version 22.x LTS ([Download](https://nodejs.org/))
 - **SharePoint Online tenant** with admin access
 - **Global or SharePoint Administrator** permissions
 - **Modern browser** - Edge (Chromium), Chrome, Firefox, or Safari
@@ -14,8 +14,8 @@ Before you begin, ensure you have:
 ### Verify Node.js Installation
 
 ```bash
-node --version  # Should show v16.x or v18.x
-npm --version   # Should show 8.x or higher
+node --version  # Should show v22.x
+npm --version   # Should show 10.x or higher
 ```
 
 ## 🚀 Installation
@@ -191,10 +191,59 @@ If you don't have an App Catalog:
 
 1. Click **Edit web part** (pencil icon)
 2. In the property pane, configure:
+   - Choose content source (Manual Entry, SharePoint Library, or URL)
    - Add your markdown content
    - Enable/disable features (Mermaid, Math, TOC, etc.)
    - Choose theme (light/dark)
 3. Click **Publish** to save the page
+
+## 📝 Content Source Options
+
+### Option 1: Manual Entry
+
+Add markdown directly in the property pane:
+1. Select **Content Source** → **Manual Entry**
+2. Type or paste your markdown in the text field
+3. Use the Monaco editor for advanced editing
+
+### Option 2: SharePoint Library Browser
+
+Load markdown files from SharePoint document libraries:
+1. Select **Content Source** → **Document Library Browser**
+2. Choose a **Document Library** from the dropdown
+3. Select a **Folder** (or choose "Root")
+4. Select a **Markdown File** (.md or .markdown)
+5. Enable **Auto-refresh** to detect external changes
+
+**Features:**
+- ✅ Auto-refresh when file changes in SharePoint
+- ✅ Version history - view and restore previous versions
+- ✅ File metadata display (last modified, author, size)
+- ✅ One-click reload button
+
+### Option 3: Direct URL
+
+Load markdown from any accessible URL:
+1. Select **Content Source** → **URL**
+2. Enter the full URL to the markdown file
+3. Click **Reload** to fetch content
+
+**Security:** The web part validates content type and blocks potentially dangerous content (script tags, javascript: URLs).
+
+### PDF Export
+
+Export rendered markdown to PDF:
+1. View your markdown content
+2. Click the **📄 Export PDF** button
+3. Use your browser's print dialog to save as PDF
+
+**What gets exported:**
+- ✅ Rendered markdown content
+- ✅ Table of contents (if enabled)
+- ✅ Mermaid diagrams
+- ✅ Syntax-highlighted code blocks
+- ✅ Math equations
+- ✅ Styled blockquotes
 
 ## ✅ Testing Features
 
@@ -259,7 +308,14 @@ console.log(greeting);
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| Markdown Content | Text | Sample | Your markdown text |
+| Content Source | Dropdown | manual | Manual Entry, Document Library Browser, or URL |
+| Markdown Content | Text | Sample | Your markdown text (manual entry only) |
+| Document Library | Dropdown | - | SharePoint library to browse (browser mode) |
+| Folder | Dropdown | (Root) | Folder within library (browser mode) |
+| Markdown File | Dropdown | - | Specific .md file to load (browser mode) |
+| File URL | Text | - | Direct URL to markdown file (URL mode) |
+| Enable Auto-refresh | Boolean | false | Auto-reload on external changes (browser mode) |
+| Enable Version History | Boolean | true | Show version history button (browser mode) |
 | Enable Mermaid | Boolean | true | Render diagrams |
 | Enable Math | Boolean | true | Render equations |
 | Enable TOC | Boolean | true | Generate table of contents |
@@ -444,14 +500,16 @@ The web part is compatible with:
 1. **Modify Styles** - Edit `BetterMarkdownWebPart.module.scss`
 2. **Add Plugins** - Extend markdown-it functionality
 3. **Custom Themes** - Create your own color schemes
-4. **External Storage** - Fetch markdown from SharePoint lists
+4. **Monaco Editor** - Customize editor experience in edit mode
 
 ### Integration Ideas
 
-- **Document Libraries** - Render .md files from libraries
+- **Document Libraries** ✅ - Already implemented with Library Browser
+- **Version Control** ✅ - Already implemented with SharePoint versioning
 - **SharePoint Lists** - Store markdown in list columns
 - **Search Integration** - Make markdown content searchable
 - **Workflow Integration** - Trigger workflows from markdown changes
+- **External URLs** ✅ - Already implemented with URL mode
 
 ### Learn More
 

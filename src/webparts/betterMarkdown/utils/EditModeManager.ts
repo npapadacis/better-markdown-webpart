@@ -13,6 +13,7 @@ export interface IEditModeManagerOptions {
   propertyPaneDetector: PropertyPaneDetector;
   onPropertyChange: (property: string, value: any) => void;
   onPropertyPaneRefresh: () => void;
+  onSaveToSharePoint?: (content: string) => Promise<boolean>;
 }
 
 export class EditModeManager {
@@ -22,6 +23,10 @@ export class EditModeManager {
   private isEditorCollapsed: boolean = false;
   private isSyncingFromEditor: boolean = false;
   private isSyncingFromPreview: boolean = false;
+  private isUpdatingPreview: boolean = false;
+  private userInteractedWithPreview: boolean = false;
+  private hasUnsavedChanges: boolean = false;
+  private savedContent: string = '';
 
   constructor(options: IEditModeManagerOptions) {
     this.options = options;
@@ -30,6 +35,8 @@ export class EditModeManager {
   public async renderEditMode(domElement: HTMLElement): Promise<void> {
     // Initialize editor content with current property value
     this.editorContent = this.options.properties.markdownContent || '# Wiki.js Style Markdown\n\nStart editing to see the preview...';
+    this.savedContent = this.editorContent;
+    this.hasUnsavedChanges = false;
     
     // Render initial preview with TOC
     const initialHtml = this.options.markdownProcessor.render(this.editorContent);
@@ -119,6 +126,8 @@ export class EditModeManager {
     const tocLinks = tocSidebar.querySelectorAll('a[href^="#"]');
     tocLinks.forEach(link => {
       link.addEventListener('click', (e) => {
+        // Mark that user interacted with preview
+        this.userInteractedWithPreview = true;
         // Let the default scroll behavior happen
         // Then sync the editor position after a short delay
         setTimeout(() => {
@@ -168,7 +177,18 @@ export class EditModeManager {
         clearTimeout(updateTimeout);
         updateTimeout = window.setTimeout(() => {
           this.editorContent = this.monacoEditor.getValue();
+
+          // Track unsaved changes
+          this.hasUnsavedChanges = (this.editorContent !== this.savedContent);
+          this.updateSaveButtonState(saveButton);
+
+          this.isUpdatingPreview = true;
+          this.userInteractedWithPreview = false; // Reset interaction flag when content changes
           this.updatePreview(domElement, previewContent);
+          // Reset flag after a delay to allow for scroll events to settle
+          setTimeout(() => {
+            this.isUpdatingPreview = false;
+          }, 100);
         }, 300);
       });
 
@@ -182,21 +202,71 @@ export class EditModeManager {
         this.syncPreviewToEditor(previewContent);
       });
 
-      // Bidirectional scroll sync: editor follows preview scroll
+      // Track user interaction with preview for scroll sync
+      previewContent.addEventListener('mousedown', () => {
+        this.userInteractedWithPreview = true;
+      });
+
+      previewContent.addEventListener('wheel', () => {
+        this.userInteractedWithPreview = true;
+      });
+
+      previewContent.addEventListener('touchstart', () => {
+        this.userInteractedWithPreview = true;
+      });
+
+      // Bidirectional scroll sync: editor follows preview scroll (only on user interaction)
       previewContent.addEventListener('scroll', () => {
-        this.syncEditorToPreview(previewContent);
+        if (this.userInteractedWithPreview) {
+          this.syncEditorToPreview(previewContent);
+        }
       });
 
       // Save functionality
-      saveButton.addEventListener('click', () => {
+      saveButton.addEventListener('click', async () => {
         const content = this.monacoEditor.getValue();
-        this.options.onPropertyChange('markdownContent', content);
-        this.options.onPropertyPaneRefresh();
         const originalText = saveButton.textContent;
-        saveButton.textContent = '✅ Saved!';
-        setTimeout(() => {
-          saveButton.textContent = originalText;
-        }, 2000);
+
+        // Save to property first
+        this.options.onPropertyChange('markdownContent', content);
+
+        // If SharePoint file is selected, save to SharePoint too
+        if (this.options.onSaveToSharePoint && (this.options.properties.selectedMarkdownFile || this.options.properties.markdownFile)) {
+          saveButton.textContent = '💾 Saving to SharePoint...';
+          saveButton.disabled = true;
+
+          try {
+            const success = await this.options.onSaveToSharePoint(content);
+            if (success) {
+              saveButton.textContent = '✅ Saved to SharePoint!';
+              // Mark content as saved
+              this.savedContent = content;
+              this.hasUnsavedChanges = false;
+              this.updateSaveButtonState(saveButton);
+            } else {
+              saveButton.textContent = '❌ Save failed';
+            }
+          } catch (error) {
+            console.error('Save to SharePoint failed:', error);
+            saveButton.textContent = '❌ Save failed';
+          } finally {
+            saveButton.disabled = false;
+            setTimeout(() => {
+              saveButton.textContent = originalText;
+            }, 2000);
+          }
+        } else {
+          // Local save only
+          saveButton.textContent = '✅ Saved!';
+          this.savedContent = content;
+          this.hasUnsavedChanges = false;
+          this.updateSaveButtonState(saveButton);
+          setTimeout(() => {
+            saveButton.textContent = originalText;
+          }, 2000);
+        }
+
+        this.options.onPropertyPaneRefresh();
       });
 
       // Toggle editor collapse/expand
@@ -266,7 +336,8 @@ export class EditModeManager {
   }
 
   private syncEditorToPreview(previewElement: HTMLElement): void {
-    if (!this.monacoEditor || this.isSyncingFromEditor) return;
+    // Don't sync if we're already syncing from editor, or if preview is being updated from typing
+    if (!this.monacoEditor || this.isSyncingFromEditor || this.isUpdatingPreview) return;
 
     try {
       this.isSyncingFromPreview = true;
@@ -489,9 +560,53 @@ export class EditModeManager {
     adjustHeight(); // Initial sizing
   }
 
-  public updateTheme(): void {
-    if (this.monacoEditor) {
-      MonacoLoader.setTheme(this.options.properties.theme);
+  public resetEditorState(): void {
+    // Reset collapsed state to expanded
+    this.isEditorCollapsed = false;
+  }
+
+  public hasUnsavedEdits(): boolean {
+    return this.hasUnsavedChanges;
+  }
+
+  public handleExternalFileChange(newContent: string): void {
+    if (this.hasUnsavedChanges) {
+      // Show warning and ask user what to do
+      const message = '⚠️ WARNING: The file has been modified externally, but you have unsaved changes in the editor.\n\nChoose an option:\n- OK: Discard your changes and load the new version\n- Cancel: Keep your changes (you should save them soon)';
+
+      if (confirm(message)) {
+        // User chose to discard their changes
+        console.log('🔄 User chose to discard local changes and load external version');
+        if (this.monacoEditor) {
+          this.monacoEditor.setValue(newContent);
+          this.savedContent = newContent;
+          this.hasUnsavedChanges = false;
+        }
+      } else {
+        console.log('⚠️ User chose to keep local changes, blocking auto-refresh');
+      }
+    } else {
+      // No unsaved changes, safe to update
+      console.log('🔄 No unsaved changes, updating editor with external version');
+      if (this.monacoEditor) {
+        this.monacoEditor.setValue(newContent);
+        this.savedContent = newContent;
+        this.hasUnsavedChanges = false;
+      }
+    }
+  }
+
+  private updateSaveButtonState(saveButton: HTMLButtonElement): void {
+    if (!saveButton) return;
+
+    if (this.hasUnsavedChanges) {
+      saveButton.style.backgroundColor = '#ff6b6b';
+      saveButton.style.fontWeight = 'bold';
+      saveButton.title = 'You have unsaved changes - Click to save';
+    } else {
+      saveButton.style.backgroundColor = '';
+      saveButton.style.fontWeight = '';
+      saveButton.title = 'Save content';
     }
   }
 

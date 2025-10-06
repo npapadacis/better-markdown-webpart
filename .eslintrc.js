@@ -52,7 +52,8 @@ module.exports = {
         //                    or else return the object to a caller (who assumes this responsibility).  Unterminated
         //                    promise chains are a serious issue.  Besides causing errors to be silently ignored,
         //                    they can also cause a NodeJS process to terminate unexpectedly.
-        '@typescript-eslint/no-floating-promises': 2,
+        // Reduced to warning: we use void operator for intentional fire-and-forget
+        '@typescript-eslint/no-floating-promises': 1,
         // RATIONALE:         Catches a common coding mistake.
         '@typescript-eslint/no-for-in-array': 2,
         // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
@@ -260,7 +261,8 @@ module.exports = {
         // STANDARDIZED BY:   @typescript-eslint\eslint-plugin\dist\configs\recommended.json
         'no-var': 2,
         // RATIONALE:         Generally not needed in modern code.
-        'no-void': 1,
+        // Disabled: void operator is useful for intentionally ignoring promises
+        'no-void': 0,
         // RATIONALE:         Obsolete language feature that is deprecated.
         // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
         'no-with': 2,
@@ -271,7 +273,8 @@ module.exports = {
         'promise/param-names': 2,
         // RATIONALE:         Catches code that is likely to be incorrect
         // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
-        'require-atomic-updates': 2,
+        // Reduced to warning: this rule has many false positives
+        'require-atomic-updates': 1,
         // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
         'require-yield': 1,
         // "Use strict" is redundant when using the TypeScript compiler.

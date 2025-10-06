@@ -2,6 +2,9 @@
 
 A comprehensive SharePoint Framework (SPFx) web part that brings advanced markdown rendering to SharePoint Online. Originally inspired by Wiki.js, this web part provides rich markdown support including Mermaid diagrams, mathematical expressions, syntax highlighting, table of contents generation, and advanced styling features.
 
+## Releases
+Available here: https://github.com/npapadacis/better-markdown-webpart/releases
+
 ## ✨ Features
 
 ### Core Markdown Support
@@ -11,6 +14,13 @@ A comprehensive SharePoint Framework (SPFx) web part that brings advanced markdo
 - ✅ Lists (ordered, unordered, nested)
 - ✅ Links and images
 - ✅ Nested blockquotes
+
+### Content Sources
+- ✅ **Manual Entry** - Edit markdown directly in property pane
+- ✅ **SharePoint Library Browser** - Browse and select .md files from document libraries
+- ✅ **Direct URL** - Load markdown from any accessible URL
+- ✅ **Auto-refresh** - Automatically reload when files change in SharePoint
+- ✅ **Version History** - View and restore previous versions of SharePoint files
 
 ### Advanced Styling Features
 - ✅ **Styled Blockquotes** - Info, warning, danger, and success variants
@@ -28,6 +38,13 @@ A comprehensive SharePoint Framework (SPFx) web part that brings advanced markdo
 - ✅ **Emoji** - Emoji shortcodes and rendering
 - ✅ **Smart Typography** - Automatic quote beautification
 
+### Editing & Export
+- ✅ **Monaco Editor** - Advanced code editor with syntax highlighting
+- ✅ **Live Preview** - Real-time preview while editing
+- ✅ **Split View** - Side-by-side editor and preview
+- ✅ **Scroll Sync** - Synchronized scrolling between editor and preview
+- ✅ **PDF Export** - Export rendered content to PDF
+
 ### User Experience
 - ✅ Light and dark themes
 - ✅ Fully responsive design
@@ -35,13 +52,14 @@ A comprehensive SharePoint Framework (SPFx) web part that brings advanced markdo
 - ✅ Copy buttons on code blocks
 - ✅ Property pane configuration
 - ✅ Toggleable features for performance
+- ✅ Unsaved changes protection
 
 ## 🚀 Quick Start
 
 See **[QUICK_START.md](./QUICK_START.md)** for detailed installation and deployment instructions.
 
 ### Prerequisites
-- Node.js v16.x or v18.x (LTS)
+- Node.js v22.x (LTS) - [Download](https://nodejs.org/)
 - SharePoint Online tenant
 - SharePoint Administrator access
 

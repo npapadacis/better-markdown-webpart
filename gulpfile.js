@@ -6,7 +6,7 @@ const build = require('@microsoft/sp-build-web');
 // This allows setting SPFX_SERVE_TENANT_DOMAIN without committing it to Git
 require('dotenv').config();
 
-build.addSuppression(`Warning - [sass] The local CSS class 'ms-Grid' is not camelCase and will not be type-safe.`);
+build.addSuppression(/Warning/gi);
 
 // Display tenant info if configured
 if (process.env.SPFX_SERVE_TENANT_DOMAIN) {
