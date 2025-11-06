@@ -1,6 +1,6 @@
 {
   "name": "better-markdown-webpart",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "main": "lib/index.js",
   "engines": {

@@ -27,6 +27,7 @@ export class EditModeManager {
   private userInteractedWithPreview: boolean = false;
   private hasUnsavedChanges: boolean = false;
   private savedContent: string = '';
+  private isSyncEnabled: boolean = true;
 
   constructor(options: IEditModeManagerOptions) {
     this.options = options;
@@ -51,6 +52,7 @@ export class EditModeManager {
             <div class="${this.options.styles.editorActions}">
               <button id="importMdFile" class="${this.options.styles.editorActionButton}" title="Import .md file">📁 Import</button>
               <button id="toggleEditor" class="${this.options.styles.editorActionButton}" title="Collapse/Expand editor">◀️ Collapse</button>
+              <button id="toggleSync" class="${this.options.styles.editorActionButton}" title="Disable/Enable scroll sync">🔗 Sync On</button>
               <button id="saveContent" class="${this.options.styles.saveButton}">💾 Save</button>
             </div>
           </div>
@@ -145,10 +147,11 @@ export class EditModeManager {
     const previewContent = domElement.querySelector('#previewContent') as HTMLElement;
     const saveButton = domElement.querySelector('#saveContent') as HTMLButtonElement;
     const toggleButton = domElement.querySelector('#toggleEditor') as HTMLButtonElement;
+    const toggleSyncButton = domElement.querySelector('#toggleSync') as HTMLButtonElement;
     const importButton = domElement.querySelector('#importMdFile') as HTMLButtonElement;
     const resizer = domElement.querySelector(`.${this.options.styles.resizer}`) as HTMLElement;
 
-    if (!container || !previewContent || !saveButton || !toggleButton || !importButton) return;
+    if (!container || !previewContent || !saveButton || !toggleButton || !toggleSyncButton || !importButton) return;
 
     try {
       console.log('📝 EditMode: Initializing Monaco Editor...');
@@ -274,6 +277,20 @@ export class EditModeManager {
         this.toggleEditorCollapse(domElement, toggleButton);
       });
 
+      // Toggle scroll sync
+      toggleSyncButton.addEventListener('click', () => {
+        this.isSyncEnabled = !this.isSyncEnabled;
+        if (this.isSyncEnabled) {
+          toggleSyncButton.textContent = '🔗 Sync On';
+          toggleSyncButton.title = 'Disable scroll sync';
+          toggleSyncButton.style.backgroundColor = '';
+        } else {
+          toggleSyncButton.textContent = '🔗 Sync Off';
+          toggleSyncButton.title = 'Enable scroll sync';
+          toggleSyncButton.style.backgroundColor = '#ff6b6b';
+        }
+      });
+
       // Import .md file
       importButton.addEventListener('click', () => {
         this.importMarkdownFile();
@@ -300,7 +317,7 @@ export class EditModeManager {
   }
 
   private syncPreviewToEditor(previewElement: HTMLElement): void {
-    if (!this.monacoEditor || this.isSyncingFromPreview) return;
+    if (!this.monacoEditor || this.isSyncingFromPreview || !this.isSyncEnabled) return;
 
     try {
       this.isSyncingFromEditor = true;
@@ -336,8 +353,8 @@ export class EditModeManager {
   }
 
   private syncEditorToPreview(previewElement: HTMLElement): void {
-    // Don't sync if we're already syncing from editor, or if preview is being updated from typing
-    if (!this.monacoEditor || this.isSyncingFromEditor || this.isUpdatingPreview) return;
+    // Don't sync if we're already syncing from editor, or if preview is being updated from typing, or if sync is disabled
+    if (!this.monacoEditor || this.isSyncingFromEditor || this.isUpdatingPreview || !this.isSyncEnabled) return;
 
     try {
       this.isSyncingFromPreview = true;

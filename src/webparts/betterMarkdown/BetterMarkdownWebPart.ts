@@ -469,6 +469,17 @@ export default class BetterMarkdownWebPart extends BaseClientSideWebPart<IBetter
   protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
     console.log('🔧 WebPart: Property changed:', propertyPath, 'from', oldValue, 'to', newValue);
 
+    // Check for unsaved changes in edit mode before making changes
+    if (this.isEditorMode && this.editModeManager && this.editModeManager.hasUnsavedEdits()) {
+      const message = '⚠️ WARNING: You have unsaved changes in the editor.\n\nChanging property pane settings will discard your unsaved changes.\n\nClick OK to discard changes and continue, or Cancel to keep editing.';
+      if (!confirm(message)) {
+        // User cancelled, revert the property change
+        this.properties[propertyPath] = oldValue;
+        this.context.propertyPane.refresh();
+        return;
+      }
+    }
+
     // Handle Mermaid enable/disable
     if (propertyPath === 'enableMermaid') {
       if (newValue && !this.mermaidRenderer.initialized) {
