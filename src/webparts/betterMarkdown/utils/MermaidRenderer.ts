@@ -214,11 +214,17 @@ export class MermaidRenderer {
     
     for (let i = 0; i < mermaidElements.length; i++) {
       const element = mermaidElements[i] as HTMLElement;
-      const id = element.id || `mermaid-${i}-${Date.now()}`;
       const code = element.textContent || '';
-      
+
+      // Skip elements that have already been rendered (contain SVG)
+      if (code.includes('<svg') || code.includes('#mermaid-') && code.includes('-svg{')) {
+        console.log(`⏭️ Skipping diagram ${i + 1}: already rendered`);
+        continue;
+      }
+
+      const id = element.id || `mermaid-${i}-${Date.now()}`;
       console.log(`🎨 Rendering diagram ${i + 1}:`, { id, codeLength: code.length });
-      
+
       try {
         // For newer versions of Mermaid, use the render method
         if (mermaidInstance.render) {

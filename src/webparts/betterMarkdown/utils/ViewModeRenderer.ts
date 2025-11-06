@@ -141,6 +141,11 @@ export class ViewModeRenderer {
       setTimeout(() => {
         void (async () => {
           try {
+            // Ensure mermaid is initialized before rendering
+            if (!this.options.mermaidRenderer.initialized) {
+              console.log('🎨 ViewMode: Mermaid not initialized, initializing now...');
+              await this.options.mermaidRenderer.initialize(this.options.theme);
+            }
             await this.options.mermaidRenderer.renderDiagrams(domElement, this.options.styles.mermaidError);
             console.log('🎨 ViewMode: Mermaid rendering completed');
           } catch (e) {
